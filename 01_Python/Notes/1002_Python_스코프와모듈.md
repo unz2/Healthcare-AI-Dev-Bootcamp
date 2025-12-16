@@ -1,12 +1,16 @@
 # Python 스코프와 모듈
 
 ## 🎯 목표
-1. 전역변수와 지역변수
-2. 스코프(LEGB)
-렉시컬 스코핑
-3. 모듈과 패키지
-4. 리스트 컴프리헨션 변수 스코프
-5. pip 패키지 배포
+1. 전역변수(Global Variable)와 지역변수(Local Variable)
+2. 스코프 탐색 규칙 (LEGB)
+3. 렉시컬 스코핑(Lexical Scoping / 정적 스코핑)
+4. nonlocal
+5. Python 함수 호출과 콜 스택(Call Stack)
+6. 모듈(Module)
+7. 패키지(Package)
+8. 내장 모듈(Built-in Modules)
+9. 외부 패키지(External Packages)
+10. requirements.txt
 ---
 
 ## 1. 전역변수(Global Variable)와 지역변수(Local Variable)
