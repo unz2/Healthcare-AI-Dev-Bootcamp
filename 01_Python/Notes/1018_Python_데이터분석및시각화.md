@@ -4,9 +4,8 @@
 1. 문제 정의
 2. 데이터 불러오기
 3. 탐색적 데이터 분석(EDA)
-4. 데이터 분석
-5. 시각화
-6. 결론
+4. 시각화
+5. 결론
 ---
 
 ## 1. 문제 정의(Problem Definition)
@@ -58,7 +57,7 @@ df.isna().mean().sort_values(ascending=False)
 df['Glucose'].fillna(df['Glucose'].median(), inplace=True)
 ```
 
-### 3-3. 시각화 탐색
+## 4. 시각화 탐색
 
 ```Python
 import seaborn as sns
@@ -82,7 +81,7 @@ plt.show()
 ```
 ![시각화](./images/시각화.png)
 
-### 3-4. 상관관계 분석
+### 4-1. 상관관계 분석
 
 ```Python
 # 상관관계 분석
@@ -93,4 +92,12 @@ sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Feature 상관관계 Heatmap")
 plt.show()
 ```
-![상관관계](./images/상관관계.png))
+![상관관계](./images/상관관계.png)
+
+## 5. 결론(Insight)
+- 가설1 : 혈당이 높을수록 당뇨병일 확률이 높다.
+- 가설2 : BMI가 높으면 당뇨병 발병 가능성이 높다.
+- 가설3 : 나이가 많을수록 당뇨병 위험이 높을 수 있다.
+
+> Outcome과 가장 관련이 있는 변수로는 혈당, BMI, 나이 순서로 관련이 높았다.  
+각 변수의 상관관계 히트맵으로 3가지 가설 모두 당뇨병 발병과 큰 관련이 있는 점을 확인할 수 있었다.
