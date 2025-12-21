@@ -79,7 +79,7 @@ sns.scatterplot(data=df, x='Glucose', y='BMI', hue='Outcome')
 plt.tight_layout()
 plt.show()
 ```
-![시각화](./images/시각화.png)
+![시각화](./images/visualization.png)
 
 ### 4-1. 상관관계 분석
 
@@ -92,7 +92,7 @@ sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Feature 상관관계 Heatmap")
 plt.show()
 ```
-![상관관계](./images/상관관계.png)
+![상관관계](./images/correlation2.png)
 
 ## 5. 결론(Insight)
 - 가설1 : 혈당이 높을수록 당뇨병일 확률이 높다.
