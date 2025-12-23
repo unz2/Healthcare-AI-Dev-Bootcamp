@@ -1,4 +1,9 @@
+<link rel="stylesheet" href="styles.css">
+
 # SQL 기본
+> 🗓️ **2025-10-22**  
+✍🏼 **작성자 : unz**
+---
 
 ## 🎯 목표
 1. SQL(Structured Query Language)이란?
