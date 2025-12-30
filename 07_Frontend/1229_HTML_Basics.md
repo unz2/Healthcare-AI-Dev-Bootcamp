@@ -1,8 +1,7 @@
 # HTML 기초
 
-> 🗓️ **2025-12-29**
-
-## ✍🏼 **작성자 : unz**
+> 🗓️ **2025-12-29**  
+✍🏼 **작성자 : unz**
 
 ## 📝 목차
 
@@ -11,6 +10,7 @@
 3. HTML 문서가 브라우저에 표시되는 과정
 4. DOM(Document Object Model)이란?
 5. HTML 주요 태그
+6. HTML 속성
 
 ---
 
@@ -86,47 +86,59 @@
 
 ## 5. HTML 주요 태그
 
-### 5-1. `<h1> ~ <h6>` (Heading)
+| 태그                   | 설명              | 역할                            |
+| ---------------------- | ----------------- | ------------------------------- |
+| `<h1> ~ <h6>`          | Heading           | 제목 태그                       |
+| `<p>`                  | Paragraph         | 문단 태그                       |
+| `<br>`                 | Break             | 줄바꿈 태그                     |
+| `<hr>`                 | Horizontal Rule   | 가로 구분선 태그                |
+| `<em>` <br> `<strong>` | Emphasis          | 강조 태그                       |
+| `<ul>`                 | Unorderd list     | 순서가 없는 리스트 태그         |
+| `<ol>`                 | Ordered list      | 순서가 있는 리스트 태그         |
+| `<li>`                 | List item         | `<ul>`과 `<ol>` 자식요소 태그   |
+| `<dl>`                 | Description List  | 정의 목록(key: value 형식) 태그 |
+| `<dt>`                 | Description Term  | `<dl>` 자식요소 key값 태그      |
+| `<dd>`                 | Description Data  | `<dl>` 자식요소 value값 태그    |
+| `<blockquote>`         | Blockquote        | 문단 인용 태그                  |
+| `<q>`                  | Quote             | 문단안에 문장 인용 태그         |
+| `<abbr>`               | Abbreviation      | 약어 태그                       |
+| `<pre>` <br> `<code>`  | Preformatted text | HTML 문서상 코드 입력 태그      |
 
-- 제목 태그
-- `<h1>`이 가장 중요하고 큰 제목이고, `<h6>`으로 갈수록 중요도가 낮아지고 크기가 작아진다.
+## 6. HTML 속성
 
-```HTML
-<h1>가장 큰 주제 (메인 타이틀)</h1>
-<h2>중간 규모의 주제</h2>
-<h3>소주제</h3>
-```
+- 태그에 추가적인 정보를 제공하거나 동작을 제어하는 설정 값
+- 모든 속성은 시작 태그 내에 위치한다.
+- `alt`(Alternative Text) 속성은 시각 장애인을 위한 스크린 리더와 이미지 로딩 실패를 대비해 반드시 작성하는 것이 좋다.
 
-### 5-2. `<p>` (Paragraph)
+이미지 태그 `<img>`의 주요 속성
 
-- 문단 태그
-- 위아래로 약간의 여백이 자동 생성되어 문단 간 구분을 돕는다.
+- `src` : 이미지 파일의 경로(Source) 지정 <span style="background-color:#fff5b1"> 필수 </span>
+- `alt` : 이미지를 표시할 수 없을 떄 나타내는 대체 텍스트
+- `width`: 이미지 너비 픽셀 단위로 설정
+- `height` : 이미지 높이 픽셀 단위로 설정
 
-```HTML
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-<p>Obcaecati quas molestiae explicabo saepe vel? Veniam.</p>
-```
+링크 태그 `<a>`의 주요 속성
 
-### 5-3. `<br>` (Break)
-
-- 줄바꿈 태그
-- 닫는 태그가 없다.
-- 문단 내에서 강제로 줄바꿈할때 사용한다.
-
-```HTML
-<p>
-  Lorem ipsum dolor,<br />
-  sit amet consectetur adipisicing elit.
-</p>
-```
-
-### 5-4. `<hr>` (Horizontal Rule)
-
-- 가로 구분선 태그
-- 닫는 태그가 없다.
+- `href` : 연결할 페이지의 URL 주소 지정 <span style="background-color:#fff5b1"> 필수 </span>
+- `target` : 링크를 어디서 열지 지정 (`_blank`는 새 탭)
+- `title` : 마우스를 올렸을 때 나타나는 툴팁 설명
 
 ```HTML
-<p>Lorem ipsum dolor sit amet.</p>
-<hr />
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero, nisi.</p>
+<!-- 가로, 세로 500px의 강아지 사진을 불러오며, 이미지가 없을 시 "귀여운 강아지"라고 표시 -->
+<img
+  src="[https://example.com/dog.jpg](https://example.com/dog.jpg)"
+  alt="귀여운 강아지"
+  width="500"
+  height="500"
+/>
+
+<!-- 새 창(_blank)에서 구글 홈페이지를 여는 링크 -->
+<a
+  href="[https://www.google.com](https://www.google.com)"
+  target="_blank"
+  title="구글 새 창에서 열기"
+>
+  구글 바로가기
+</a>
+
 ```
