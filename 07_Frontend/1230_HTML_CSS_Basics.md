@@ -224,6 +224,36 @@
 </head>
 ```
 
+### 7-3. 외부 스타일 시트(External CSS)
+
+- CSS코드를 별도의 CSS 파일에 작성하고 이를 HTML 문서에 연결하여 사용하는 방식
+- 여러개의 HTML 문서가 하나의 CSS 파일을 공유할 수 있다.
+- HTML은 구조에만 집중하고, CSS는 디자인에만 집중하여 코드의 가독성이 높아진다.
+
+```HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 연결 예제</title>
+    <!-- link 태그를 사용하여 CSS 파일 연결 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>CSS 연결 예제</h1>
+</body>
+</html>
+```
+
+```CSS
+/* style.css */
+h1 {
+  color: ##1A1A1A;
+  text-align: center;
+}
+```
+
 ## 8. 선택자(Selectors)
 
 > 스타일을 적용할 HTML 요소를 선택하는 규칙
