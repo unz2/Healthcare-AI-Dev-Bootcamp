@@ -29,9 +29,12 @@
 > 요소의 너비와 높이를 계산하는 기준 정의
 
 - **content-box (기본값)**
-  - 설정한 width와 height 값은 오직 컨텐츠 영역에만 적용
-  - 요소 전체 너비 : width + padding + border
+  - 설정한 너비와 높이는 오직 Content 영역에만 적용
+  - 요소 전체 너비 : `width + padding + border`
 - **border-box**
+  - 설정한 너비와 높이가 Padding과 Border를 포함한 크기에 적용
+  - Padding, Border를 추가해도 요소의 전체 크기가 고정 된다.
+  - 요소 전체 너비 : `width` (Padding과 Border가 포함됨)
 
 ```CSS
 .box {
