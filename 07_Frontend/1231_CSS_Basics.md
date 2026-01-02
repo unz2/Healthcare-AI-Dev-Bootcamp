@@ -20,8 +20,12 @@
 ### 1-1. Box Model 구성요소
 
 - **Margin** : 테두리 바깥쪽 여백, 다른 요소와의 간격을 조절한다.
+  - 속기형 `margin : top right bottom left;`
 - **Border** : 패딩과 마진 사이의 경계선
+  - 테두리 굵기, 스타일, 색상 지정 `border : 1px soild black;`
+  - 꼭짓점 둥글게 만들기 `border-radius : 50px; border-radius : 50%;`
 - **Padding** : 테두리와 콘텐츠 사이의 안쪽 여백
+  - 속기형 `padding : top right bottom left;`
 - **Content** : 실제 내용이 표시되는 영역
 
 ### 1-2. box-sizing
