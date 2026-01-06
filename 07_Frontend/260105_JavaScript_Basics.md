@@ -5,6 +5,11 @@
 
 ## 📝 목차
 
+1. JavaScript란?
+2. JavaScript 실행 방법
+3. Node.js 란?
+4. 변수
+
 ---
 
 ## 1. JavaScript란?
