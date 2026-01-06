@@ -5,6 +5,16 @@
 
 ## 📝 목차
 
+1. 자료형(Data Types)
+2. 연산자(Operator)
+3. 조건문
+4. Falsy
+5. 반복문(Loops)
+6. 배열(Array)
+7. 객체(Object)
+8. 맵(Map)
+9. 함수(Function)
+
 ---
 
 ## 1. 자료형(Data Types)
