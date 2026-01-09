@@ -8,7 +8,8 @@
 1. 화살표 함수(Arrow Function)
 2. Web API란?
 3. Timer API
-
+4. Storage API
+5. Fetch API
 ---
 
 ## 1. 화살표 함수(Arrow Function)
