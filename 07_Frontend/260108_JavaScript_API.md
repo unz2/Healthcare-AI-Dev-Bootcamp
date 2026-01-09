@@ -36,13 +36,13 @@ const add = (a, b) => {
 ```js
 // 1) 매개변수가 하나일 때
 // 매개변수 괄호 생략 가능
-const square = (x) => {
+const square = x => {
   return x * x;
 };
 
 // 2) 실행문이 한 줄이고 return만 있을 때
 // {} 중괄호, return 생략 가능
-const square = (x) => x * x;
+const square = x => x * x;
 
 // 3) 매개변수가 없을 때
 // 이 경우에는 () 괄호 반드시 필요
@@ -172,4 +172,97 @@ const timerId = setInterval(() => {
     console.log("interval 중지");
   }
 }, 1000);
+```
+
+## 4. Storage API
+
+> 브라우저가 제공하는 key-value 쌍으로 데이터를 저장할 수 있는 저장소 API
+
+- 서버가 아닌 사용자 브라우저에 데이터가 저장된다.
+- 문자열(String)만 저장한다.
+
+### 4-1. localStorage
+
+- 브라우저를 닫거나 컴퓨터를 재시작해도 데이터가 영구적으로 보관된다.
+- 동일한 도메인 내에서 모든 탭과 창이 데이터를 공유한다.
+- 주요 용도 : 자동 로그인 정보, 사용자 설정, 캐싱된 데이터 등
+
+### 4-2. sessionStorage
+
+- 페이지의 세션이 유지되는 동안만 데이터가 보관된다. (텝을 닫으면 데이터가 삭제 됨)
+- 데이터를 생성한 해당 탭 내에서만 유효하다.
+- 같은 사이트라도 다른 탭이면 별도의 저장소를 가진다.
+- 주요 용도 : 일회성 입력 폼 데이터, 페이지 전환 시 유지해야 하는 임시 상태
+
+### 4-3. 주요 메서드
+
+| 메서드              | 설명             | 예시                                         |
+| ------------------- | ---------------- | -------------------------------------------- |
+| setItem(key, value) | 데이터 저장      | `localStorage.setItem("name", "홍길동");`    |
+| getItem(key)        | 데이터 읽기      | `const name = localStorage.getItem("name");` |
+| removeItem(key)     | 특정 데이터 삭제 | `localStorage.removeItem("name");`           |
+| clear()             | 전체 데이터 삭제 | `localStorage.clear();`                      |
+| length              | 저장된 항목 개수 | `localStorage.length;`                       |
+
+### 4-4. 객체 저장하기
+
+- Storage API는 오직 문자열만 저장한다.
+- 따라서, 객체나 배열을 저장하려면 `JSON.stringify()`로 직렬화하고, 읽어올 때 `JSON.parse()`로 역직렬화해야한다.
+
+```
+JSON(JavaScript Object Notation) 이란?
+데이터를 저장하고 전송할 때 사용하는 가장 대중적인 데이터 형식
+데이터를 key : value 형식으로 저장한다.
+```
+
+```js
+const user = { name: "홍길동", age: 20 }; // Object
+localStorage.setItem("userKey", JSON.stringify(user)); // 직렬화
+JSON.parse(localStorage.getItem("userKey")); // 역직렬화
+
+const numbers = [1, 2, 3]; // 배열
+localStorage.setItem("numKey", JSON.stringify(numbers)); // 직렬화
+JSON.parse(localStorage.getItem("numKey")); // 역직렬화
+```
+
+## 5. Fetch API
+
+> 브라우저가 제공하는 서버 통신용 Web API
+
+- HTTP 요청(Request)를 보내고 응답(Response)를 수신한다.
+- 비동기로 동작한다.
+
+```
+비동기(Asyncronous)란?
+- 오래 걸리는 작업을 기다리지 않고, 다음 코드를 먼저 실행하는 방식
+- 서버 요청은 시간이 걸리기 때문에 요청은 보내고, 다른 작업을 계속 진행
+- fetch는 서버에 요청을 보내고, 응답이 오면 그때 결과를 처리
+```
+
+### 5-1. 주요 메서드
+
+```js
+// 기본구조
+fetch(url, options)
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
+
+// GET - 데이터를 가져올 때 (기본값)
+fetch("https://jsonplaceholder.typicode.com/posts")
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+  });
+
+// POST - 새로운 데이터를 생성할 때
+fetch("https://jsonplaceholder.typicode.com/posts", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ title: "hello", body: "world" }),
+})
+  .then((response) => response.json())
+  .then((data) => {
+    result.textContent = JSON.stringify(data, null, 2);
+  });
 ```
