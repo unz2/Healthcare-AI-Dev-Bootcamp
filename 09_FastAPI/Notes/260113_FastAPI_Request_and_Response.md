@@ -1,4 +1,4 @@
-# FastAPI Request & Response.md
+# FastAPI Request & Response
 
 > 🗓️ **2026-01-13**  
 > ✍🏼 **작성자 : unz**
