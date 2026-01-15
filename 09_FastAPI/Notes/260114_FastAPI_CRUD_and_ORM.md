@@ -231,3 +231,131 @@ session = SessionFactory() # Session 객체 생성
 session.add(item) # 위에서 만든 item 객체를 세션 작업 목록에 추가 (Pending 상태)
 session.commit() # 현재 세션의 변경 사항을 실제 DB에 반영
 ```
+
+## 6. ORM을 활용한 CURD
+
+```python
+from fastapi import FastAPI, Path, HTTPException, status
+from pydantic import BaseModel
+from sqlalchemy import select
+
+from connection import SessionFactory
+from models import Item
+
+app = FastAPI()
+
+class ItemCreateRequest(BaseModel):
+    name: str
+    price: int
+
+
+class ItemResponse(BaseModel):
+    id: int
+    name: str
+    price: int
+
+
+# Create: 상품 등록 API
+@app.post("/items", status_code=status.HTTP_201_CREATED)
+def create_item_api(body: ItemCreateRequest) -> ItemResponse:
+    with SessionFactory() as session:
+        new_item = Item(name=body.name, price=body.price)
+        session.add(new_item)
+        session.commit()  # DB에 반영
+        return new_item
+
+
+# Read: 전체 상품 조회 API
+@app.get("/items")
+def get_items_api() -> list[ItemResponse]:
+    with SessionFactory() as session:
+        stmt = select(Item)
+        items = session.scalars(stmt).all()
+        return items
+
+
+# Read: 단일 상품 조회 API
+@app.get("/items/{item_id}")
+def get_item_api(item_id: int) -> ItemResponse:
+    with SessionFactory() as session:
+        stmt = select(Item).where(Item.id == item_id)
+        item: Item | None = session.scalar(stmt)
+
+        if item is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Item Not Found (id: {item_id})",
+            )
+        return item
+
+
+class ItemUpdateRequest(BaseModel):
+    name: str | None = None
+    price: int | None = None
+
+
+# Update: 상품 수정 API
+# PATCH: Partial Update -> 부분 수정
+@app.patch("/items/{item_id}", status_code=status.HTTP_200_OK)
+def update_item_api(item_id: int, body: ItemUpdateRequest) -> ItemResponse:
+    with SessionFactory() as session:
+        stmt = select(Item).where(Item.id == item_id)
+        item: Item | None = session.scalar(stmt)
+
+        if item is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Item Not Found (id: {item_id})",
+            )
+
+        # 객체의 값을 변경하고, commit하여 DB에 반영
+        if body.name:
+            item.name = body.name
+        if body.price:
+            item.price = body.price
+        session.commit()
+
+        return item
+
+
+class ItemReplaceRequest(BaseModel):
+    name: str
+    price: int
+
+
+# Update: 상품 수정 API
+# PUT: Replace -> 대체
+@app.put("/items/{item_id}", status_code=200)
+def replace_item_api(item_id: int, body: ItemReplaceRequest) -> ItemResponse:
+    with SessionFactory() as session:
+        stmt = select(Item).where(Item.id == item_id)
+        item: Item | None = session.scalar(stmt)
+
+        if item is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Item Not Found (id: {item_id})",
+            )
+
+        item.name = body.name
+        item.price = body.price
+        session.commit()
+        return item
+
+
+# Delete: 상품 삭제 API
+@app.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_item_api(item_id: int) -> None:
+    with SessionFactory() as session:
+        stmt = select(Item).where(Item.id == item_id)
+        item: Item | None = session.scalar(stmt)
+
+        if item is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Item Not Found (id: {item_id})",
+            )
+
+        session.delete(item)
+        session.commit()
+```
