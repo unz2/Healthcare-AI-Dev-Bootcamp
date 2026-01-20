@@ -12,6 +12,7 @@
 3. 환경 구축 및 모델 다운로드
 4. 생성 파라미터 및 프롬프트 제어
 5. FastAPI 연동
+6. GPT 연동
 
 ---
 
@@ -202,3 +203,81 @@ for _ in range(5):
 - 무한한 데이터 스트림 처리
   - 끝이 없는 데이터(센서 데이터, 실시간 로그 등)를 다룰 때 전체를 리스트에 담는 것은 불가능하지만
   - `yield`는 하나씩 받아 처리할 수 있다.
+
+## 6. GPT 연동
+
+```bash
+# OpenAI 라이브러리 설치
+pip install openai
+```
+
+```python
+from fastapi import FastAPI, Body
+from fastapi.responses import StreamingResponse
+from openai import AsyncOpenAI
+from pydantic import BaseModel
+from config import settings
+
+client = AsyncOpenAI(api_key=settings.openai_api_key)
+app = FastAPI()
+
+
+class ResultSchema(BaseModel):
+    result: str
+    confidence: float
+
+
+@app.post("/chat-gpt")
+async def chat_gpt_api(user_input: str = Body(...)):
+    # OpenAI의 stream 기능을 사용하여 답변을 조금씩 가져옴
+    async def event_generator():
+        async with client.responses.stream(
+            model="gpt-5-mini", input=user_input, text_format=ResultSchema
+        ) as stream:
+            async for event in stream:
+                if event.type == "response.output_text.delta":
+                    yield event.delta
+                elif event.type == "response.completed":
+                    break
+
+    # 최종적으로 클라이언트에게 스트리밍 방식으로 응답 전송
+    return StreamingResponse(event_generator(), media_type="text/plain")
+```
+
+### 6-1. Pydantic 사용하여 환경변수 파일 처리하기
+
+1. 라이브러리 설치
+
+```bash
+pip install pydantic-settings
+```
+
+2. 기본 사용법
+
+- 프로젝트 루트 디렉토리에 .env 파일을 만들고, 이를 읽어올 파이썬 클래스를 정의한다.
+
+```python
+# .env 파일
+OPENAI_API_KEY="#"
+```
+
+```python
+# config.py 파일
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    openai_api_key: str # 환경변수명과 동일하게 변수 정의 (타입 지정 필수)
+
+    class Config: # 참조할 환경변수 파일 경로 지정
+        env_file = ".env"
+
+# 객체를 생성하는 시점에 환경변수를 읽고 검증함
+settings = Settings()
+```
+
+```python
+# main.py 파일
+from config import settings
+
+client = AsyncOpenAI(api_key=settings.openai_api_key)
+```
