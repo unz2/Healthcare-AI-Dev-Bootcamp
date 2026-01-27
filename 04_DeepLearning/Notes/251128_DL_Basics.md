@@ -1,8 +1,7 @@
 # 딥러닝 기초
 
-> 🗓️ **2025-11-28**
-
-## ✍🏼 **작성자 : unz**
+> 🗓️ **2025-11-28**  
+> ✍🏼 **작성자 : unz**
 
 ## 📝 목차
 
@@ -15,6 +14,8 @@
 7. 오차역전파
 8. 경사하강법
 9. 딥러닝 지원 파이썬 라이브러리
+10. 텐서(Tensor)
+11. Iris 데이터셋을 이용한 딥러닝
 
 ---
 
@@ -159,4 +160,146 @@ import tensorflow as tf
 
 print(f"PyTorch 버전: {torch.__version__}")
 print(f"TensorFlow 버전: {tf.__version__}")
+```
+
+## 10. 텐서(Tensor)
+
+> 파이토치에서 데이터를 표현하는 가장 기본적인 다차원 배열 자료구조
+
+- 파이토치에서는 데이터의 차원에 상관없이 텐서로 통칭한다.
+- 스칼라(Scalar) : `torch.tensor(5)`
+- 벡터(Vector) : `torch.tensor([1, 2, 3])`
+- 행렬(Matrix) : `torch.tensor([[1, 2], [3, 4]])`
+- NumPy의 array와 사용법이 유사하다.
+- 알반 배열과 달리 텐서는 GPU에 올릴 수 있어, 대규모 연산을 병렬로 처리하여 딥러닝 학습 속도를 높일 수 있다.
+- 역전파에 필요한 기울기를 자동으로 추적하는 기능(자동 미분)을 내장하고 있다.
+
+## 11. Iris 데이터셋을 이용한 딥러닝
+
+### 1. 데이터 준비 및 로드
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+
+# 장치 설정
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+elif torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
+print(f"Using device: {device}")
+
+
+# 데이터 준비
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# 데이터 분할
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 데이터 스케일링
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Tensor 변환
+X_train_ts = torch.tensor(X_train, dtype=torch.float32)
+y_train_ts = torch.tensor(y_train, dtype=torch.long)
+X_test_ts = torch.tensor(X_test, dtype=torch.float32)
+y_test_ts = torch.tensor(y_test, dtype=torch.long)
+
+# TensorDataset:
+train_dataset = TensorDataset(X_train_ts, y_train_ts)
+test_dataset = TensorDataset(X_test_ts, y_test_ts)
+
+# DataLoader: 데이터를 Mini-batch 단위로 쪼개고 모델이 학습할 수 있는 형태로 공급하는 iterator
+# 학습 데이터에는 순서가 모델에 편향을 주지 않도록 Epoch마다 데이터를 섞어주도록 shuffle=True
+# 평가 데이터에는 데이터 순서를 섞을 필요 없으므로 shuffle=False
+train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
+```
+
+### 2. 모델 정의
+
+```python
+class IrisClassifier(nn.Module): # 신경망 기본 모듈(nn.Module) 상속받아 커스텀 신경망 설계
+    def __init__(self):
+        super(IrisClassifier, self).__init__()
+        self.fc1 = nn.Linear(4, 16)  # (입력층) feature 4개, 은닉층 16개
+        self.fc2 = nn.Linear(16, 16) # (은닉층) 이전 계층에서 받은 출력 16개 -> 다시 16개의 출력으로 변환
+        self.fc3 = nn.Linear(16, 3)  # (출력층) 은닉층의 16개 출력 -> 최종 3개(Setosa, Versicolor, Virginica)의 출력으로 변환
+
+    def forward(self, x): # 입력 데이터가 각 층을 통과하여 출력이 나오는 연산 순서 정의
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+```
+
+### 3. 학습 루프 구현
+
+```python
+model = IrisClassifier().to(device)
+criterion = nn.CrossEntropyLoss() # 다중 분류 손실 함수, 자체적으로 softmax 함수를 호출한다.
+optimizer = optim.Adam(model.parameters(), lr=0.01)
+# Adam 알고리즘을 사용하여 model의 모든 학습 가능한 매개변수(가중치와 편향)를 최적화할 optimizer 객체 생성
+```
+
+### 4. 모델 학습
+
+```python
+def train_model(epochs):
+    model.train()
+    for epoch in range(epochs):
+        running_loss = 0
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            optimizer.zero_grad()               # 1. 기울기 초기화
+            outputs = model(inputs)             # 2. 순전파
+            loss = criterion(outputs, labels)   # 3. 손실 계산
+            loss.backward()                     #  4. 역전파
+            optimizer.step()                    # 5. 가중치 업데이트
+
+            running_loss += loss.item() * inputs.size(0)
+
+        epoch_loss = running_loss / len(train_loader.dataset)
+        if (epoch + 1) % 10 == 0: # 10 에폭마다 출력
+            print(f"Epoch [{epoch+1}/{epochs}], Avg Loss: {epoch_loss:.4f}")
+    print("학습 완료!")
+```
+
+### 5. 모델 평가
+
+```python
+def check_accuracy(loader, dataset_name):
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for inputs, labels in loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = model(inputs)
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    accuracy = 100 * correct / total
+    print(f'{dataset_name} 정확도: {accuracy:.2f}%')
+
+# 학습 및 평가 실행
+if __name__ == '__main__':
+    train_model(epochs=50)
+    print("-" * 30)
+    check_accuracy(train_loader, "훈련 데이터셋")
+    check_accuracy(test_loader, "테스트 데이터셋")
 ```
